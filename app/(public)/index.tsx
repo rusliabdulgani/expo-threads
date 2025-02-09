@@ -1,5 +1,4 @@
 import { Text, View } from "react-native";
-import { ClerkProvider, ClerkLoaded } from "@clerk/clerk-expo";
 
 export default function Index() {
   return (
