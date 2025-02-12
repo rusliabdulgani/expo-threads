@@ -1,4 +1,4 @@
-import { Slot, SplashScreen } from "expo-router";
+import { Slot, SplashScreen, useRouter, useSegments } from "expo-router";
 import { ClerkProvider, ClerkLoaded, useAuth } from "@clerk/clerk-expo";
 import { tokenCache } from "@/utils/cache";
 import {
@@ -31,12 +31,28 @@ const InitialLayout = () => {
     DMSans_500Medium,
     DMSans_700Bold,
   });
+  const { isSignedIn, isLoaded } = useAuth();
+  const segments = useSegments();
+  const router = useRouter();
 
   useEffect(() => {
     if (fontsLoaded) {
       SplashScreen.hideAsync();
     }
   }, [fontsLoaded]);
+
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    const inAuthGroup = segments[0] === "(auth)";
+
+    if (isSignedIn && !inAuthGroup) {
+      router.replace("/(auth)/(tabs)/feed");
+    } else if (!isSignedIn && inAuthGroup) {
+      router.replace("/(public)");
+    }
+  }, [isSignedIn, isLoaded, segments]);
+
   return <Slot />;
 };
 
