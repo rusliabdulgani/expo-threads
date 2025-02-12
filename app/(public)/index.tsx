@@ -11,22 +11,25 @@ import { Ionicons } from "@expo/vector-icons";
 import { useWarmUpBrowser } from "@/hooks/useWarmUpBrowser";
 import { useAuth, useSSO } from "@clerk/clerk-expo";
 import { useCallback } from "react";
-import { Redirect, useRouter } from "expo-router";
+import { Redirect } from "expo-router";
 import FullScreenLoader from "@/components/loading";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 const redirectUrl = __DEV__
   ? process.env.EXPO_PUBLIC_DEV_REDIRECT_URL
-    ? `${process.env.EXPO_PUBLIC_DEV_REDIRECT_URL}/(authenticated)/index`
-    : "exp://localhost:8081/(authenticated)/index"
-  : `${process.env.EXPO_PUBLIC_PROD_SCHEME}://authenticated/index`;
+    ? `${process.env.EXPO_PUBLIC_DEV_REDIRECT_URL}/(auth)/index`
+    : "exp://localhost:8081/(auth)/index"
+  : `${process.env.EXPO_PUBLIC_PROD_SCHEME}://auth/index`;
 
 export default function Index() {
-  const router = useRouter();
   const { isSignedIn, isLoaded } = useAuth();
 
   useWarmUpBrowser();
 
   const { startSSOFlow } = useSSO();
+
+  const users = useQuery(api.users.getAllUsers);
 
   const handleInstagramLogin = useCallback(async () => {
     try {
@@ -65,7 +68,7 @@ export default function Index() {
   }, []);
 
   if (isSignedIn) {
-    return <Redirect href="/(authenticated)" />;
+    return <Redirect href="/(auth)/(tabs)/profile" />;
   }
 
   return (

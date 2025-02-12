@@ -1,5 +1,5 @@
 import { Slot, SplashScreen } from "expo-router";
-import { ClerkProvider, ClerkLoaded } from "@clerk/clerk-expo";
+import { ClerkProvider, ClerkLoaded, useAuth } from "@clerk/clerk-expo";
 import { tokenCache } from "@/utils/cache";
 import {
   DMSans_400Regular,
@@ -8,8 +8,14 @@ import {
   useFonts,
 } from "@expo-google-fonts/dm-sans";
 import { useEffect } from "react";
+import { ConvexProviderWithClerk } from "convex/react-clerk";
+import { ConvexReactClient } from "convex/react";
 
 const clerkPublishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
+
+const convex = new ConvexReactClient(process.env.EXPO_PUBLIC_CONVEX_URL!, {
+  unsavedChangesWarning: false,
+});
 
 if (!clerkPublishableKey) {
   throw new Error(
@@ -17,7 +23,6 @@ if (!clerkPublishableKey) {
   );
 }
 
-// Prevent auto hide splash screen
 SplashScreen.preventAutoHideAsync();
 
 const InitialLayout = () => {
@@ -42,7 +47,9 @@ export default function RootLayout() {
       publishableKey={clerkPublishableKey as string}
     >
       <ClerkLoaded>
-        <InitialLayout />
+        <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
+          <InitialLayout />
+        </ConvexProviderWithClerk>
       </ClerkLoaded>
     </ClerkProvider>
   );
