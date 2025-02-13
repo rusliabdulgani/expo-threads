@@ -10,6 +10,9 @@ import {
 import { useEffect } from "react";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
 import { ConvexReactClient } from "convex/react";
+import { ExecutionEnvironment } from "expo-constants";
+import Constants from "expo-constants";
+import * as Sentry from "@sentry/react-native";
 
 const clerkPublishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
@@ -24,6 +27,18 @@ if (!clerkPublishableKey) {
 }
 
 SplashScreen.preventAutoHideAsync();
+
+const navigationIntegration = Sentry.reactNavigationIntegration();
+
+Sentry.init({
+  dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
+  attachScreenshot: true,
+  debug: true,
+  tracesSampleRate: 1.0,
+  integrations: [navigationIntegration],
+  enableNativeFramesTracking: true,
+  enableNative: true,
+});
 
 const InitialLayout = () => {
   const [fontsLoaded] = useFonts({

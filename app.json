@@ -35,7 +35,16 @@
           "backgroundColor": "#ffffff"
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "@sentry/react-native/expo",
+        {
+          "organization": "Gani Corp",
+          "project": "threads-video",
+          "url": "https://sentry.io/",
+          "enableNative": true
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
